@@ -20,6 +20,8 @@ repositories {
 
 dependencies {
     implementation("net.dv8tion:JDA:$jdaVersion")
+    // jsoup HTML parser library @ https://jsoup.org/
+    implementation 'org.jsoup:jsoup:1.14.3'
 }
 
 compileJava.options.encoding = 'UTF-8'

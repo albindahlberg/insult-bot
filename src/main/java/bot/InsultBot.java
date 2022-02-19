@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class InsultBot extends ListenerAdapter {
      */
     public static void main(String[] args) throws Exception
     {
-        JDABuilder setup = JDABuilder.createDefault("OTQzMjQ4MjQyNzgxNjAxODEy.YgwSYQ.yUYPhXxSE-aJq4HrgzaWN9CjzjU").
+        JDABuilder setup = JDABuilder.createDefault("OTQzMjQ4MjQyNzgxNjAxODEy.YgwSYQ.8PNyhTlXVoZwRBYStojEgMtglMY").
                 addEventListeners(new InsultBot())
                 .enableIntents(GatewayIntent.GUILD_MESSAGES,
                                 GatewayIntent.GUILD_MESSAGE_TYPING,
@@ -35,14 +36,34 @@ public class InsultBot extends ListenerAdapter {
     /**
      * Generate an insult
      * @return an insult
+     * @throws IOException upon web scraping error
      */
-    private String generateInsult(){
-        return " You smell.";
+    private String createInsult() throws IOException {
+        InsultGenerator gen = new InsultGenerator();
+        return gen.generateInsult();
     }
 
     /**
-     * Upon receiving message in the channel, bot will insult
-     * the member mentioned in the message
+     * Insults targets
+     * @param event the event that triggered a response from InsultBot
+     * @param targets the members to be insulted
+     */
+    private void insultTargets(MessageReceivedEvent event, List<Member> targets) {
+        for (Member member : targets) {
+            String insult;
+            try {
+                insult = createInsult();
+            } catch (IOException e) {
+                System.out.println(e);
+                return;
+            }
+            String response = member.getAsMention() + insult;
+            event.getChannel().sendMessage(response).queue();
+        }
+    }
+
+    /**
+     * Parses prefix and generates targets for insults
      * @param event an event in the channel
      */
     @Override
@@ -52,14 +73,11 @@ public class InsultBot extends ListenerAdapter {
 
         Message msg = event.getMessage();
         String input = msg.getContentRaw();
+
         if (input.startsWith(":insult ")) {
             List<Member> members = msg.getMentionedMembers();
             if (!members.isEmpty()) {
-                for (Member member : members) {
-                    String insult = generateInsult();
-                    String response = member.getAsMention() + insult;
-                    event.getChannel().sendMessage(response).queue();
-                }
+                insultTargets(event, members);
             }
         }
     }
