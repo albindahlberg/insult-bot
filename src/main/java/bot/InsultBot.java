@@ -18,14 +18,13 @@ import java.util.List;
 public class InsultBot extends ListenerAdapter {
     /**
      * Logging in to the Insult-bot
-     * @param args input to class call. args[0] is intended to
-     *             be the bot token. For simplicity's sake, my
-     *             bot token is directly used when logging in.
+     * @param args input to class call. args[0] is the
+     *             individual bot token.
      * @throws Exception
      */
     public static void main(String[] args) throws Exception
     {
-        JDABuilder setup = JDABuilder.createDefault("OTQzMjQ4MjQyNzgxNjAxODEy.YgwSYQ.8PNyhTlXVoZwRBYStojEgMtglMY").
+        JDABuilder setup = JDABuilder.createDefault(args[0]).
                 addEventListeners(new InsultBot())
                 .enableIntents(GatewayIntent.GUILD_MESSAGES,
                                 GatewayIntent.GUILD_MESSAGE_TYPING,
