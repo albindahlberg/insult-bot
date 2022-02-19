@@ -3,8 +3,9 @@ plugins {
     id'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
-mainClassName = 'bot.InsultBot'
-
+application {
+    mainClassName = 'bot.InsultBot'
+}
 version '1.0'
 def jdaVersion = '4.4.0_352'
 
